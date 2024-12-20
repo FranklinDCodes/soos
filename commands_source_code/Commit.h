@@ -12,10 +12,12 @@
 #include <string>
 #include <ctime>
 #include <vector>
+#include <fstream>
 
 // namespace
 using std::string;
 using std::vector;
+using std::ifstream, std::ofstream;
 
 // change type
 enum changeType {
@@ -80,6 +82,8 @@ class Commit {
             
             // create new array to add modifications to
             fileModifications.at(files.size() - 1) = vector<modification>();
+
+
 
 
         }
