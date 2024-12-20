@@ -1,0 +1,45 @@
+
+soos commit <message>
+
+    Creates a new commit of all the tracked files that have been modified.
+
+    Positional args:
+
+        <message> | The commit message.
+
+
+soos track <file_name>
+
+    Adds a file to the list of tracked files.
+
+    Positional args:
+
+        <file_name> | The name of the file to be tracked. '.' or '*' will add 
+                    all files.
+
+
+soos forget <file_name>
+
+    Removes a file from the list of tracked files. It's changes will still 
+    exist in past commits and are still revertible, but it will no longer be 
+    tracked.
+
+    Positional args:
+    
+        <file_name> | The name of the file to be forgotten. '.' or '*' will add 
+                      all files.
+
+
+soos revert <commit>
+
+    Reverts the state of the repository to what it was at a certain commit.
+
+    Positional args:
+    
+        <commit> | The unique identifier for the commit.
+
+    Flags:
+
+        -s | I.e. soft. Doesn't revert the past changes of any files that are 
+             currently untracked.
+

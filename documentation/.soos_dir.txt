@@ -1,0 +1,24 @@
+
+
+commits/
+
+    - directory full of files, each that represent a commit
+    - each commit file is a numbered csv containing affected files and their 
+      changes to get back to previous commit
+    - files get committed with soos commit <message>
+    - will contain a .zip folder that holds ALL files that were once tracked in their latest commit
+
+
+log.csv
+
+    - contains any changes required to show a proper log
+    - shows any commit switches, etc.
+
+
+tracked_files.txt
+
+    - contains a list of all tracked files
+    - files that are no longer tracked will can still be changed when reverted
+      to commits that they were tracked for
+    - files become tracked and untracked with soos track <file_name> and soos forget <file_name>
+
