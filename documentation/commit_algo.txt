@@ -1,0 +1,5 @@
+
+Find all the lines of the current code in the previous code
+Map the spaced in between as either insertions or deletions
+Add all to list
+For commit comparisons, would need to invert all of the insertions and deletions

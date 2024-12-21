@@ -2,3 +2,27 @@
 .lst
 
     List file. I just don't like using text files.
+
+
+.commit
+
+    File containing a commit. Uses the following format:
+
+        <filename>
+        <modification_type>;<start_line>;<line_count>;<special_delim><affected_code><reversed_special_delim>
+            ...
+        
+        ...
+
+
+        Where:
+
+            <filename>: name of file affected by commit
+            <modification_type>: in, del, or mod
+            <start_line>: line num of start to modification
+            <line_count>: length of modification
+            <special_delim>: typically "~/". To signal the start and end of the code block. If "~/" is in the
+                             code block, it becomes "~//" or "~///", etc.
+            <affected_code>: block of code that was deleted or modified. No need to specify for insertion.
+            <reversed_special_delim>: special_delim reversed. Typically "/~"
+

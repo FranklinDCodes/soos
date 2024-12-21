@@ -1,0 +1,5 @@
+commit:10
+
+myFile.goop
+in;4;3;~/console.log(myVar);\nconsole.log(myVar2);\n/~
+

@@ -43,3 +43,6 @@ soos revert <commit>
         -s | I.e. soft. Doesn't revert the past changes of any files that are 
              currently untracked.
 
+
+soos compare
+
