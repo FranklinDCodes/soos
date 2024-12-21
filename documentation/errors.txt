@@ -1,0 +1,20 @@
+
+
+Soos Error
+
+    Soos command not being run in an initialized soos repository, or
+    it is being run in a corrupted soos repository.
+
+Argument Error
+    
+    Too many or too few arguments passed
+
+
+Invalid File Error
+
+    User passed a complete or relative file path that does not exist
+
+
+Value Error
+
+    Invalid argument either in terms of datatype or value

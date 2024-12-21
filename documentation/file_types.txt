@@ -1,0 +1,4 @@
+
+.lst
+
+    List file. I just don't like using text files.

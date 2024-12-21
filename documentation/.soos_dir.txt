@@ -15,7 +15,7 @@ log.csv
     - shows any commit switches, etc.
 
 
-tracked_files.txt
+tracked_files.lst
 
     - contains a list of all tracked files
     - files that are no longer tracked will can still be changed when reverted

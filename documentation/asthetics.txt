@@ -1,0 +1,6 @@
+
+Soos is lower case unless capitalized for other reasons.
+
+Soos output for a given command should always contain leading and trailing end line.
+
+All non-error messages are proceeded with a \t character
