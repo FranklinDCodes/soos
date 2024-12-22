@@ -11,10 +11,20 @@
 // includes
 #include <string>
 #include <vector>
+#include <iostream>
+#include <iomanip>
 
 // namespace
 using std::string;
 using std::vector;
+using std::cout, std::endl, std::ostream;
+using std::setw, std::left;
+
+// constants
+
+// string index to add to ascii value for string hash
+const int ASCII_ADD_IND = 4;
+
 
 // linked list class
 class Node {
@@ -29,15 +39,15 @@ class Node {
         // default constructor
         Node() {
 
-            string value = "";
-            Node* next = nullptr;
+            value = "";
+            next = nullptr;
         }
         
         // constructor
         Node(string nodeValue) {
 
-            string value = nodeValue;
-            Node* next = nullptr;
+            value = nodeValue;
+            next = nullptr;
         }
 
         // destructor
@@ -83,9 +93,6 @@ class HashTable {
         // number of indexes
         int tableSize;
 
-        // string index to add to ascii value for string hash
-        const int ASCII_ADD_IND = 4;
-
     public:
 
         // default constructor
@@ -105,14 +112,10 @@ class HashTable {
         // destructor
         ~HashTable() {
 
-            // iterate through indexes
-            for (int i = 0; i < tableSize; i ++) {
+            // delete all the items that were added to the table
+            for (Node* ptr : valuesInTable) {
 
-                // delete index if not empty
-                if (table[i] != nullptr) {
-
-                    delete table[i];
-                }
+                delete ptr;
             }
 
             delete [] table;
@@ -224,6 +227,71 @@ class HashTable {
             }
 
         }
+
+        friend ostream& operator<<(ostream& os, const HashTable& hashTable) {
+
+            // consts
+            const int PRINT_INDEX_WIDTH = 5;  
+            const string EMPTY_SPACE = "-";        
+
+            
+            // vector to hold the empty index sequence
+            int emptyInds = 0;
+
+            // open every ind in the table
+            for (int i = 0; i < hashTable.tableSize; i ++) {
+                
+                // if printing this space
+                if (hashTable.table[i] != nullptr || i == 0 || i == hashTable.tableSize - 1) {
+
+                    // print previous empties
+                    // 1 emtpy space has accumulated
+                    if (emptyInds == 1) {
+
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
+                        emptyInds = 0;
+                    }
+                    // 2 emtpy spaces have accumulated
+                    else if (emptyInds == 2) {
+
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 2 << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
+                        emptyInds = 0;
+                    }
+                    // 3+ emtpy spaces have accumulated
+                    else if (emptyInds >= 3) {
+
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - emptyInds << " | " << EMPTY_SPACE << endl;
+                        os << "  ..." << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
+                        emptyInds = 0;
+
+                    }
+
+                    // print space itself
+                    // print space non-empty
+                    if (hashTable.table[i] != nullptr) {
+
+                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | " << hashTable.table[i]->getValue() << endl;
+                    }
+                    // print spaceempty
+                    else {
+
+                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | " << EMPTY_SPACE << endl;
+                    }
+
+                }
+                // if space is empty
+                else {
+
+                    emptyInds ++;
+                }
+
+            }
+
+            return os;
+        }
+
 
         void saveToFile();
 
