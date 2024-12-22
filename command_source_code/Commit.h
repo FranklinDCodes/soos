@@ -49,7 +49,7 @@ class Commit {
         vector<string> files;
 
         // list of modifications
-        vector<vector<modification>> fileModifications;
+        vector<vector<modification>*> fileModifications;
         
 
     public:
@@ -75,22 +75,63 @@ class Commit {
         }
 
         // add all the changes from a file
-        void addFile(string filePath) {
+        int addFile(string filePath, vector<string> previousVersion) {
 
             // add file to file list
             files.push_back(filePath);
             
             // create new array to add modifications to
-            fileModifications.at(files.size() - 1) = vector<modification>();
+            fileModifications.at(files.size() - 1) = new vector<modification>();
+            vector<modification>* fileMods = fileModifications.at(files.size() - 1);
+
+            // open file
+            ifstream infile;
+            infile.open(filePath);
+
+            // check that file is open
+            if (!infile.is_open()) {
+                return -1;
+            }
+
+
+            // lines for tracking through the file
+            string curLinePrev = previousVersion.at(0);
+            string nextLinePrev;
+            string curLineNew;
+            int lineNumPrev = 0;
+            int lineNumNew = 0;
+
+            // keep reading in lines in pairs
+            while (getline(infile, curLineNew)) {
+                
+                // if cur line in the previous file is the last one
+                if (lineNumPrev >= previousVersion.size()) {
+                    
+                    
+
+                }
+                else {
+
+                    // grab the next line of the new file
+
+                    
+
+                }
+
+
+                lineNumNew ++;
+
+
+            }
 
 
 
-
+            return 0;
         }
 
-    
+        int addFirstTimeFile(string filePath) {
 
-
+        }    
 
 
 };
