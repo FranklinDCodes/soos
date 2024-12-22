@@ -10,14 +10,63 @@
 
 // includes
 #include <string>
+#include <vector>
 
 // namespace
 using std::string;
+using std::vector;
 
-// linked list struct
-struct Node {
-    string value;
-    Node* next;
+// linked list class
+class Node {
+
+    private:
+
+        string value;
+        Node* next;
+
+    public:
+
+        // default constructor
+        Node() {
+
+            string value = "";
+            Node* next = nullptr;
+        }
+        
+        // constructor
+        Node(string nodeValue) {
+
+            string value = nodeValue;
+            Node* next = nullptr;
+        }
+
+        // destructor
+        ~Node() {
+
+            if (next != nullptr) {
+
+                delete next;
+            }
+        }
+
+        // access next
+        Node* getNext() {
+
+            return next;
+        }
+
+        // access next
+        string getValue() {
+
+            return value;
+        }
+
+        // mutate next
+        void setNext(Node* nextNode) {
+
+            next = nextNode;
+        }
+
 };
 
 // hash table class
@@ -27,6 +76,9 @@ class HashTable {
 
         // table
         Node** table;
+
+        // nodes for deletion put together
+        vector<Node*> valuesInTable;
 
         // number of indexes
         int tableSize;
@@ -50,6 +102,22 @@ class HashTable {
             tableSize = size;
         }
 
+        // destructor
+        ~HashTable() {
+
+            // iterate through indexes
+            for (int i = 0; i < tableSize; i ++) {
+
+                // delete index if not empty
+                if (table[i] != nullptr) {
+
+                    delete table[i];
+                }
+            }
+
+            delete [] table;
+        }
+
         // raw hashing function
         int hash(int key) {
 
@@ -63,14 +131,14 @@ class HashTable {
             if (key.length() >= ASCII_ADD_IND + 1) {
 
                 // hash with the ascii value of the nth character added to the length
-                return this->hash(key.length() + key.at(ASCII_ADD_IND))
+                return this->hash(key.length() + key.at(ASCII_ADD_IND));
 
             }
             // otherwise add the first character
             else {
 
                 // hash with the ascii value of the nth character added to the length
-                return this->hash(key.length() + key.at(0))
+                return this->hash(key.length() + key.at(0));
 
             }
 
@@ -83,9 +151,7 @@ class HashTable {
             int index = this->strHash(str);
 
             // create node 
-            Node* newNode = new Node;
-            newNode->value = str;
-            newNode->next = nullptr;
+            Node* newNode = new Node(str);
 
             // if empty index, insert value
             if (table[index] == nullptr) {
@@ -102,16 +168,19 @@ class HashTable {
                 Node* currentNode = table[index];
 
                 // while next node isn't nullptr
-                while (currentNode->next != nullptr) {
+                while (currentNode->getNext() != nullptr) {
 
-                    currentNode = currentNode->next;
+                    currentNode = currentNode->getNext();
 
                 }
 
                 // insert
-                currentNode->next = newNode;
+                currentNode->setNext(newNode);
 
             }
+
+            // add nodes to list to delete
+            valuesInTable.push_back(newNode);
 
         }
 
@@ -122,7 +191,7 @@ class HashTable {
             int index = this->strHash(str);
 
             // check for value at index
-            if (table[index]->value == str) {
+            if (table[index]->getValue() == str) {
 
                 return true;
             }
@@ -138,12 +207,12 @@ class HashTable {
                 Node* currentNode = table[index];
 
                 // while next node isn't nullptr
-                while (currentNode->next != nullptr) {
+                while (currentNode->getNext() != nullptr) {
 
-                    currentNode = currentNode->next;
+                    currentNode = currentNode->getNext();
                     
                     // check if the current node value is the str
-                    if (currentNode->value == str) {
+                    if (currentNode->getValue() == str) {
 
                         return true;
                     }
@@ -157,7 +226,7 @@ class HashTable {
         }
 
         void saveToFile();
-        
+
 };
 
 
