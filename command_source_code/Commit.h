@@ -13,11 +13,15 @@
 #include <ctime>
 #include <vector>
 #include <fstream>
+#include "HashTable.h"
 
 // namespace
 using std::string;
 using std::vector;
 using std::ifstream, std::ofstream;
+
+// constants
+const int HASH_TABLE_SIZE = 977;
 
 // change type
 enum changeType {
@@ -93,38 +97,22 @@ class Commit {
                 return -1;
             }
 
+            // init hashtable
+            HashTable* hashTable = new HashTable(HASH_TABLE_SIZE);
 
-            // lines for tracking through the file
-            string curLinePrev = previousVersion.at(0);
-            string nextLinePrev;
-            string curLineNew;
-            int lineNumPrev = 0;
-            int lineNumNew = 0;
-
-            // keep reading in lines in pairs
-            while (getline(infile, curLineNew)) {
+            // add all of new commit to hash table
+            string fileLine;
+            while (getline(infile, fileLine)) {
                 
-                // if cur line in the previous file is the last one
-                if (lineNumPrev >= previousVersion.size()) {
-                    
-                    
-
-                }
-                else {
-
-                    // grab the next line of the new file
-
-                    
-
-                }
-
-
-                lineNumNew ++;
-
-
+                hashTable->insert(fileLine);
             }
 
+            // search for every line of prev version in hash table
 
+            // add all common lines to pair showing which lines map up
+
+            // make hash table to hold a struct with a seperate arg for keys
+            // the struct needs to hold the str value as well as the line number so they can be matched up
 
             return 0;
         }
