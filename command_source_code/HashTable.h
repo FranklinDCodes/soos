@@ -27,11 +27,12 @@ const int ASCII_ADD_IND = 4;
 
 
 // linked list class
+template <typename t>
 class Node {
 
     private:
 
-        string value;
+        t value;
         Node* next;
 
     public:
@@ -39,14 +40,14 @@ class Node {
         // default constructor
         Node() {
 
-            value = "";
+            t = NULL;
             next = nullptr;
         }
         
         // constructor
-        Node(string nodeValue) {
+        Node(t nodeValue) {
 
-            value = nodeValue;
+            t = nodeValue;
             next = nullptr;
         }
 
@@ -60,13 +61,13 @@ class Node {
         }
 
         // access next
-        Node* getNext() {
+        Node* getNext() const {
 
             return next;
         }
 
         // access next
-        string getValue() {
+        t getValue() const {
 
             return value;
         }
@@ -80,15 +81,16 @@ class Node {
 };
 
 // hash table class
+template <typename T>
 class HashTable {
 
     private:
 
         // table
-        Node** table;
+        Node<T>** table;
 
         // nodes for deletion put together
-        vector<Node*> valuesInTable;
+        vector<Node<T>*> valuesInTable;
 
         // number of indexes
         int tableSize;
@@ -105,7 +107,7 @@ class HashTable {
         // constructor
         HashTable(int size) {
 
-            table = new Node*[size]();
+            table = new Node<T>*[size]();
             tableSize = size;
         }
 
@@ -113,7 +115,7 @@ class HashTable {
         ~HashTable() {
 
             // delete all the items that were added to the table
-            for (Node* ptr : valuesInTable) {
+            for (Node<T>* ptr : valuesInTable) {
 
                 delete ptr;
             }
@@ -122,13 +124,13 @@ class HashTable {
         }
 
         // raw hashing function
-        int hash(int key) {
+        int hash(int key) const {
 
             return key % tableSize;
         }
 
         // string hashing function
-        int strHash(string key) {
+        int strHash(string key) const {
 
             // check if key has min characters
             if (key.length() >= ASCII_ADD_IND + 1) {
@@ -148,13 +150,13 @@ class HashTable {
         }
 
         // insert string into the hash table
-        void insert(string str) {
+        void insert(T value, string key) {
 
             // hash 
-            int index = this->strHash(str);
+            int index = this->strHash(key);
 
             // create node 
-            Node* newNode = new Node(str);
+            Node<T>* newNode = new Node<T>(value);
 
             // if empty index, insert value
             if (table[index] == nullptr) {
@@ -168,7 +170,7 @@ class HashTable {
             else {
 
                 // node tracker
-                Node* currentNode = table[index];
+                Node<T>* currentNode = table[index];
 
                 // while next node isn't nullptr
                 while (currentNode->getNext() != nullptr) {
@@ -188,7 +190,7 @@ class HashTable {
         }
 
         // search if a string has been inserted into the table
-        bool search(string str) {
+        bool search(string str) const {
 
             // hash 
             int index = this->strHash(str);
@@ -207,7 +209,7 @@ class HashTable {
             else {
 
                 // tracker node
-                Node* currentNode = table[index];
+                Node<T>* currentNode = table[index];
 
                 // while next node isn't nullptr
                 while (currentNode->getNext() != nullptr) {
@@ -228,7 +230,7 @@ class HashTable {
 
         }
 
-        friend ostream& operator<<(ostream& os, const HashTable& hashTable) {
+        friend ostream& operator<<(ostream& os, const HashTable& hashTable) const {
 
             // consts
             const int PRINT_INDEX_WIDTH = 5;  
@@ -297,8 +299,6 @@ class HashTable {
 
 };
 
-
-// 
 
 
 

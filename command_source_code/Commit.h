@@ -14,11 +14,13 @@
 #include <vector>
 #include <fstream>
 #include "HashTable.h"
+#include <utility>
 
 // namespace
 using std::string;
 using std::vector;
 using std::ifstream, std::ofstream;
+using std::pair;
 
 // constants
 const int HASH_TABLE_SIZE = 977;
@@ -35,6 +37,62 @@ struct modification {
     int linesReplaced;
     string code;
     changeType type;
+};
+
+// change object
+struct modification {
+    int line;
+    int linesReplaced;
+    string code;
+    changeType type;
+};
+
+
+// object to represent a line of code in a file
+class FileLine {
+
+    private:
+
+        // actual line of code
+        string lineText;
+
+        // line number
+        int lineNum;
+
+    public:
+
+        // default constructor
+        FileLine() {
+
+            lineText = "";
+            lineNum = -1;
+        }
+
+        // constructor
+        FileLine(string text, int line) {
+
+            lineText = text;
+            lineNum = line;
+        }
+
+        // line text getter
+        string getText() const {
+
+            return lineText;
+        }
+
+        // line num getter
+        int getNum() const {
+
+            return lineNum;
+        }
+
+        // overload for comparison operator
+        bool operator == (const FileLine& otherLine) const {
+
+            return lineText == otherLine.getText();
+        }
+
 };
 
 
@@ -98,21 +156,29 @@ class Commit {
             }
 
             // init hashtable
-            HashTable* hashTable = new HashTable(HASH_TABLE_SIZE);
+            HashTable<FileLine>* hashTable = new HashTable<FileLine>(HASH_TABLE_SIZE);
 
             // add all of new commit to hash table
             string fileLine;
+            int lineNum = 0;
             while (getline(infile, fileLine)) {
-                
-                hashTable->insert(fileLine);
+
+                // create new file line to add
+                FileLine fileLineObj = FileLine(fileLine, lineNum);
+
+                // insert into hash table
+                hashTable->insert(fileLineObj, fileLine);
+            
+                lineNum ++;
+
             }
 
             // search for every line of prev version in hash table
 
             // add all common lines to pair showing which lines map up
 
-            // make hash table to hold a struct with a seperate arg for keys
-            // the struct needs to hold the str value as well as the line number so they can be matched up
+            // figure out how to handle multiple of the same line
+            // build in pop function into node that returns true if it's to be removed
 
             return 0;
         }
