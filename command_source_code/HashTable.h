@@ -18,7 +18,7 @@
 using std::string;
 using std::vector;
 using std::cout, std::endl, std::ostream;
-using std::setw, std::left;
+using std::setw, std::left, std::right;
 
 // constants
 
@@ -32,7 +32,13 @@ class Node {
 
     private:
 
+        // value held by the node
         t value;
+
+        // duplicate count
+        int duplicateCount;
+
+        // pointer to the next node
         Node* next;
 
     public:
@@ -40,24 +46,54 @@ class Node {
         // default constructor
         Node() {
 
-            t = NULL;
+            value = NULL;
+            duplicateCount = -1;
             next = nullptr;
         }
         
         // constructor
         Node(t nodeValue) {
 
-            t = nodeValue;
+            value = nodeValue;
+            duplicateCount = 1;
             next = nullptr;
         }
 
-        // destructor
-        ~Node() {
+        // function to delete a node of a certain value
+        // if child has the value, checks for duplicates and possibly deletes
+        // child will return false if it is a duplicate and deletes of the duplicates
+        // recursively called, true is returned if popped, false if value not found
+        bool pop(t popValue) {
 
-            if (next != nullptr) {
+            // if the next node is nullptr
+            if (next == nullptr) {
 
-                delete next;
+                // return false, not found
+                return false;
+
             }
+            // if the next node is the value
+            else if (next->getValue() == popValue) {
+
+                // check for duplicates in child
+                if (next->count() > 1) {
+
+                    // take away one of them
+                    next->decrementCount();
+
+                    // return true
+                    return true;
+
+                }
+
+            }
+            // else pass on function call
+            else {
+
+                return next->pop(popValue);
+
+            }
+
         }
 
         // access next
@@ -72,10 +108,28 @@ class Node {
             return value;
         }
 
+        // get the number of duplicates
+        int count() const {
+
+            return duplicateCount;
+        }
+
         // mutate next
         void setNext(Node* nextNode) {
 
             next = nextNode;
+        }
+
+        // add 1 to the count to signify a duplicate insertion
+        void incrementCount() {
+
+            duplicateCount ++;
+        }
+
+        // subtract 1 from the count to signify a duplicate insertion
+        void decrementCount() {
+
+            duplicateCount --;
         }
 
 };
@@ -148,7 +202,7 @@ class HashTable {
             }
 
         }
-
+        
         // insert string into the hash table
         void insert(T value, string key) {
 
@@ -172,11 +226,39 @@ class HashTable {
                 // node tracker
                 Node<T>* currentNode = table[index];
 
+                // check if nodes are equal
+                if (currentNode->getValue() == newNode->getValue()) {
+
+                    // increment duplicate count of current
+                    currentNode->incrementCount();
+
+                    // delete new node
+                    delete newNode;
+
+                    // end function
+                    return;
+
+                }
+
                 // while next node isn't nullptr
                 while (currentNode->getNext() != nullptr) {
 
                     currentNode = currentNode->getNext();
 
+                    // check if nodes are equal
+                    if (currentNode->getValue() == newNode->getValue()) {
+
+                        // increment duplicate count of current
+                        currentNode->incrementCount();
+
+                        // delete new node
+                        delete newNode;
+
+                        // end function
+                        return;
+
+                    }
+                
                 }
 
                 // insert
@@ -230,10 +312,11 @@ class HashTable {
 
         }
 
-        friend ostream& operator<<(ostream& os, const HashTable& hashTable) const {
+        friend ostream& operator<<(ostream& os, const HashTable& hashTable) {
 
             // consts
             const int PRINT_INDEX_WIDTH = 5;  
+            const int DUPLICATE_COUNT_WIDTH = 2;
             const string EMPTY_SPACE = "-";        
 
             
@@ -250,22 +333,21 @@ class HashTable {
                     // 1 emtpy space has accumulated
                     if (emptyInds == 1) {
 
-                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
                         emptyInds = 0;
                     }
                     // 2 emtpy spaces have accumulated
                     else if (emptyInds == 2) {
 
-                        os << setw(PRINT_INDEX_WIDTH) << left << i - 2 << " | " << EMPTY_SPACE << endl;
-                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
-                        emptyInds = 0;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 2 << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
                     }
                     // 3+ emtpy spaces have accumulated
                     else if (emptyInds >= 3) {
 
-                        os << setw(PRINT_INDEX_WIDTH) << left << i - emptyInds << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - emptyInds << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
                         os << "  ..." << endl;
-                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i - 1 << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
                         emptyInds = 0;
 
                     }
@@ -274,12 +356,31 @@ class HashTable {
                     // print space non-empty
                     if (hashTable.table[i] != nullptr) {
 
-                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | " << hashTable.table[i]->getValue() << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | ";
+                        os << setw(DUPLICATE_COUNT_WIDTH) << left << hashTable.table[i]->count();
+                        os << " | " << hashTable.table[i]->getValue() << endl;
+
+                        // tracker var
+                        Node<T>* curNode = hashTable.table[i];
+
+                        // check for a chained entry
+                        while (curNode->getNext() != nullptr) {
+
+                            // move chain
+                            curNode = curNode->getNext();
+
+                            // print next in chain
+                            os << setw(PRINT_INDEX_WIDTH - 1) << right << "->" << "  | ";
+                            os << setw(DUPLICATE_COUNT_WIDTH) << left << curNode->count();
+                            os << " | " << curNode->getValue() << endl;
+
+                        }
+
                     }
-                    // print spaceempty
+                    // print space empty
                     else {
 
-                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | " << EMPTY_SPACE << endl;
+                        os << setw(PRINT_INDEX_WIDTH) << left << i << " | " << setw(DUPLICATE_COUNT_WIDTH) << left << 0 << " | " << EMPTY_SPACE << endl;
                     }
 
                 }
