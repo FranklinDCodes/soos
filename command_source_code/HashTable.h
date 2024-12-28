@@ -13,12 +13,14 @@
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <variant>
 
 // namespace
 using std::string;
 using std::vector;
 using std::cout, std::endl, std::ostream;
 using std::setw, std::left, std::right;
+using std::variant;
 
 // constants
 
@@ -27,6 +29,9 @@ const int ASCII_ADD_IND = 4;
 
 
 // linked list class
+// templated data type must have a pop() method
+// templated data type must have a key() method
+// this will return 
 template <typename t>
 class Node {
 
@@ -34,9 +39,6 @@ class Node {
 
         // value held by the node
         t value;
-
-        // duplicate count
-        int duplicateCount;
 
         // pointer to the next node
         Node* next;
@@ -60,10 +62,11 @@ class Node {
         }
 
         // function to delete a node of a certain value
-        // if child has the value, checks for duplicates and possibly deletes
-        // child will return false if it is a duplicate and deletes of the duplicates
-        // recursively called, true is returned if popped, false if value not found
-        bool pop(t popValue) {
+        // if a node has the value being searched for
+        // the nodes value pop() method will be called,
+        // if it's false, the node will be deleted
+        // this method returns false, if value not found, else value
+        variant<t, bool> pop(string key) {
 
             // if the next node is nullptr
             if (next == nullptr) {
@@ -73,9 +76,11 @@ class Node {
 
             }
             // if the next node is the value
-            else if (next->getValue() == popValue) {
+            else if (next->getValue().key() == key) {
 
-                // check for duplicates in child
+                t returnValue;
+
+                // check if next node is ready to die or has duplicate
                 if (next->count() > 1) {
 
                     // take away one of them
@@ -108,28 +113,10 @@ class Node {
             return value;
         }
 
-        // get the number of duplicates
-        int count() const {
-
-            return duplicateCount;
-        }
-
         // mutate next
         void setNext(Node* nextNode) {
 
             next = nextNode;
-        }
-
-        // add 1 to the count to signify a duplicate insertion
-        void incrementCount() {
-
-            duplicateCount ++;
-        }
-
-        // subtract 1 from the count to signify a duplicate insertion
-        void decrementCount() {
-
-            duplicateCount --;
         }
 
 };

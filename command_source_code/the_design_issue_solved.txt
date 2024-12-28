@@ -1,0 +1,14 @@
+
+The node will contain a single FileLine object
+the node will have a pop method that will recursively search for the value
+The node will call the the pop method of the FileLine object when it finds it
+
+the FileLine object will overload the comparison operator to be the value
+the FileLine object will have a pop method with a pass-by-reference bool to determine whether or not to delete it's node
+the FileLine objects pop method will return a FileLine object
+given duplicates, the FileLine pop return will be a copy of it's own object with the same text value, but only 1 line num
+
+in the pop recursion, the parent node of the found value node will delete it if the pop P.B.R. bool comes up true
+the node pop func will also have a return value of FileLine (from the FileLine obj) and a bool P.B.R. (from the FileLine obj)
+
+the hash table will have a pop method with a P.B.R. bool and a FileLine obj return value

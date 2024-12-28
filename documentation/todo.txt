@@ -2,5 +2,10 @@
 track.cpp
 
     - add . and * options for positional args, as well as * with pattern matching
-    
 
+
+HashTable.H
+
+    - make stream insertion operator overload able to handle chaining
+    - have hash function clean out whitespace
+    - switch search function to recursion or pop function to iteration
