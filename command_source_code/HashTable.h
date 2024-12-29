@@ -29,8 +29,9 @@ const int ASCII_ADD_IND = 4;
 
 
 // linked list class
-// templated data type must have a pop() method
-// templated data type must have a key() method
+// templated data type must have a pop() method to handle removal of duplicate
+// templated data type must have a merge(T other) method to handle consolidation of duplicates
+// templated data type must have an overloaded == operator
 // this will return 
 template <typename t>
 class Node {
@@ -62,42 +63,64 @@ class Node {
         }
 
         // function to delete a node of a certain value
-        // if a node has the value being searched for
-        // the nodes value pop() method will be called,
-        // if it's false, the node will be deleted
-        // this method returns false, if value not found, else value
-        variant<t, bool> pop(string key) {
+        // returns null if it doesn't exist
+        t pop(string key, bool& successFlag) {
+
+            // return value
+            t returnValue;
+            bool valuePopSuccess;
 
             // if the next node is nullptr
             if (next == nullptr) {
 
-                // return false, not found
-                return false;
+                // return undefined, and set success Flag
+                successFlag = false;
+                return returnValue;
 
             }
             // if the next node is the value
-            else if (next->getValue().key() == key) {
+            else if (next->getValue() == key) {
 
-                t returnValue;
+                // it will be FileLine object if preserve node, NULL if don't
+                t popReturn = next->getValue().pop(valuePopSuccess);
 
-                // check if next node is ready to die or has duplicate
-                if (next->count() > 1) {
+                // if pop return flag is false, that is last value so kill node and return it
+                if (!valuePopSuccess) {
 
-                    // take away one of them
-                    next->decrementCount();
+                    // get value
+                    returnValue = next->getValue();
+                    
+                    // delete next
+                    delete next;
+                    
+                    // return the next value
+                    successFlag = true;
+                    return returnValue;
 
-                    // return true
-                    return true;
+                }
+                // if a returned object
+                else {
 
+                    // return the popReturn
+                    successFlag = true;
+                    return popReturn
+                
                 }
 
             }
             // else pass on function call
             else {
 
-                return next->pop(popValue);
+                return next->pop(key);
 
             }
+
+        }
+
+        // adds a duplicate value to this nodes value
+        void merge(string key) {
+
+            // call the 
 
         }
 
@@ -259,7 +282,7 @@ class HashTable {
         }
 
         // search if a string has been inserted into the table
-        bool search(string str) const {
+        /*bool search(string str) const {
 
             // hash 
             int index = this->strHash(str);
@@ -297,8 +320,68 @@ class HashTable {
 
             }
 
-        }
+        }*/
 
+       // pops and returns an item from the table
+       T pop(string key, bool& successFlag) {
+
+            // set default returns
+            T returnValue;
+
+            // get index and value
+            int index = this->strHash(key);
+            T* tableValue = table[index];
+
+            // check if index is empty
+            if (tableValue == nullptr) {
+
+                successFlag = false;
+                return returnValue;
+
+            }
+            // get if index is value
+            else if (tableValue->getValue() == key) {
+
+                // success flag for node pop
+                bool nodePopFlag;
+
+                // it will be FileLine object if preserve node, NULL if dont
+                T popReturn = tableValue->getValue().pop(nodePopFlag);
+
+                // if pop return success is false, that is last value so kill node and return it
+                if (!nodePopFlag) {
+
+                    // get value
+                    returnValue = tablePtr->getValue();
+                    
+                    // delete next
+                    delete tableValue;
+                    
+                    // return the next value
+                    successFlag = true;
+                    return returnValue;
+
+                }
+                // if a returned object
+                else {
+
+                    // return the popReturn
+                    successFlag = true;
+                    return popReturn
+                
+                }
+
+            }
+            // else call recursive function
+            else {
+
+                return tableValue->pop(key);
+
+            }
+
+       }
+
+        // overload print operation
         friend ostream& operator<<(ostream& os, const HashTable& hashTable) {
 
             // consts
@@ -381,7 +464,6 @@ class HashTable {
 
             return os;
         }
-
 
         void saveToFile();
 

@@ -12,6 +12,8 @@
 #include <string>
 #include <ctime>
 #include <vector>
+#include <queue>
+#include <functional>
 #include <fstream>
 #include "HashTable.h"
 #include <utility>
@@ -19,6 +21,7 @@
 // namespace
 using std::string;
 using std::vector;
+using std::priority_queue, std::greater;
 using std::ifstream, std::ofstream;
 using std::pair;
 
@@ -56,8 +59,8 @@ class FileLine {
         // actual line of code
         string lineText;
 
-        // line number
-        int lineNum;
+        // line number that have this text, stored as a priority queue
+        priority_queue<int, vector<int>, greater<int>> lineNums;
 
     public:
 
@@ -65,26 +68,53 @@ class FileLine {
         FileLine() {
 
             lineText = "";
-            lineNum = -1;
         }
 
         // constructor
         FileLine(string text, int line) {
 
             lineText = text;
-            lineNum = line;
+            lineNums.push(line);
         }
 
-        // line text getter
+        // remove a duplicate value from line num
+        FileLine pop(bool successFlag) {
+
+            // check if size is greater than 1
+            if (lineNums.size() > 1) {
+
+                // lowest line num
+                int minLine = lineNums.top();
+
+                // remove lowest line num
+                lineNums.pop();
+
+                // create a version with the lowest line num
+                successFlag = true;
+                return FileLine(lineText, minLine);
+            }
+            // otherwise return to signify no duplicates
+            else {
+
+                successFlag = false;
+                return FileLine();
+
+            }
+
+        }
+
+        // get text
         string getText() const {
 
             return lineText;
+
         }
 
-        // line num getter
-        int getNum() const {
+        // get lowest line num in list
+        string getMinLineNum() const {
 
-            return lineNum;
+            return lineText;
+
         }
 
         // overload for comparison operator
