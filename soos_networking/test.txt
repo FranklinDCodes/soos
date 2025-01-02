@@ -1,0 +1,7 @@
+The file has successfully been sent to the server :D
+another line
+yet another line
+
+wow it even got a blank line ^^^
+
+and this is the end :D
